@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Home</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <style>
+      .loader {
+        position: relative;
+        z-index: 9999;        
+        width: 100%;
+        height: 100%;
+        background-color: rgba(255, 255, 255, 0.7);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      
+      .loader::after {
+        content: "";
+        display: block;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        border: 6px solid #ccc;
+        border-color: #ccc transparent #ccc transparent;
+        animation: loader 1.2s linear infinite;
+      }
+      
+      @keyframes loader {
+        0% {
+          transform: rotate(0);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      </style>
+      
+  </head>
+  
+  <body>
+
+    <div class="container-fluid">
+
+        <nav class="navbar mt-5">
+            
+            <div class="container-fluid">
+                <div class="m-auto">
+                    <form class="d-flex" role="search" action='{{ url_for("home")}}'' method="post">
+                        <input name="domain_name" class="form-control me-2" type="text" placeholder="www.example.com" aria-label="Search">
+                        <button class="btn btn-outline-success" type="submit">Search</button>
+                    </form>
+                </div>
+            </div>
+        </nav>
+
+
+        <div id="loader" class="loader"></div>
+
+        <div id="content" style="display: none;">
+          {% if domainName  %}       
+              <div class="row mt-5">
+
+              
+
+              <div class="col-sm-3">
+                <div class="card h-100">
+                  <div class="card-header text-bg-secondary text-center">
+                      <h4>
+                          Domain
+                      </h4>
+                  </div>
+                  <div class="card-body">
+                    <!-- <h5 class="card-title">Domain</h5> -->
+                    <p class="card-text">Domain name:  {{WhoisService_result['WhoisRecord']['domainName']}}</p>
+                    <p class="card-text"> Registrar Name : {{WhoisService_result['WhoisRecord']['registrarName']}}</p>
+                    <p class="card-text"> Created Date : {{WhoisService_result['WhoisRecord']['registryData']['createdDate']}}</p>
+                    <p class="card-text"> Updated Date: {{WhoisService_result['WhoisRecord']['registryData']['updatedDate']}}</p>
+                    <p class="card-text"> Updated Date Normalized: {{WhoisService_result['WhoisRecord']['registryData']['updatedDateNormalized']}}</p>
+                    <p class="card-text"> Expires Date : {{WhoisService_result['WhoisRecord']['registryData']['expiresDate']}}</p>                  
+                    <!-- <a href="#" class="btn btn-primary">Go somewhere</a> -->
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-sm-3 mb-3 mb-sm-0">
+                <div class="card h-100">
+                  <div class="card-header text-bg-secondary text-center">
+                      <h4>
+                          SSL
+                      </h4>
+                  </div>
+                  <div class="card-body">
+                    <h5 class="card-title">SSL</h5>
+                    <p class="card-text">Dmain Name : {{ssl_result['domain']}}</p>                  
+                    {% for user in  ssl_result['certificates']%}
+                    {% if  user['chainHierarchy'] == 'end-user' %}
+
+                      <p> Chain Hierarchy : {{user['chainHierarchy']}}</p>
+                      <p> Valid From : {{user['validFrom']}}</p>
+                      <p> Valid To : {{user['validTo']}}</p>
+                      <p> Common Name/Organization : {{user['subject']['commonName']}}</p>
+                      
+
+                    {% endif%}
+                    {% endfor %}
+                    <!-- <a href="#" class="btn btn-primary">Go somewhere</a> -->
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-sm-3">
+                <div class="card h-100">
+                  <div class="card-header text-bg-secondary text-center">
+                      <h4>
+                          DNS
+                      </h4>
+                  </div>
+                  <div class="card-body">
+                    <h5 class="card-title">DNS</h5>
+                    <p class="card-text">Dmain Name : {{dns_result['DNSData']['domainName']}}</p>
+                    <p class="card-text">Dmain Type : {{dns_result['DNSData']['dnsTypes']}}</p>
+                  
+                    <h6> DNS Records</h6>
+                    <hr></hr>
+                    {% for record in  dns_result['DNSData']['dnsRecords']%}                  
+
+                      <p> Type : {{record['type']}}</p>
+                      <p> name : {{record['name']}}</p>
+                      <p> Additional Name : {{record['additionalName']}}</p>
+                      <p> TTl : {{record['ttl']}}</p>    
+                      <p> rRsetType : {{record['rRsetType']}}</p>    
+                      <p> rawText : {{record['rawText']}}</p>
+                      <p> priority : {{record['priority']}}</p>    
+                      <p> target : {{record['target']}}</p>             
+    
+                    {% endfor %}
+                  
+                    
+                    <!-- <a href="#" class="btn btn-primary">Go somewhere</a> -->
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-sm-3 mb-3 mb-sm-0">
+                  <div class="card h-100">
+                      <div class="card-header text-bg-secondary text-center">
+                          <h4>
+                              Server
+                          </h4>
+                      </div>
+                    <div class="card-body">
+                      <h5 class="card-title">Server</h5>
+                      <p class="card-text">Created Date:  {{msg}}</p>
+                    </div>
+                  </div>
+              </div>
+
+              </div>
+          {% endif %}
+        </div>
+
+    </div>
+
+    <script>
+      // Get references to the loader and content elements
+      const loader = document.getElementById("loader");
+      const content = document.getElementById("content");
+    
+      // Function to show the loader
+      function showLoader() {
+        loader.style.display = "block";
+        content.style.display = "none";
+      }
+    
+      // Function to hide the loader
+      function hideLoader() {
+        loader.style.display = "none";
+        content.style.display = "block";
+      }
+
+      window.onload = function() {
+        hideLoader();
+      };
+    
+      // Add an event listener to the form submit button
+      const form = document.querySelector("form");
+      const submitButton = form.querySelector("button[type='submit']");
+      submitButton.addEventListener("click", showLoader);
+      
+      
+    </script>
+    
+      
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+    
+</html>
