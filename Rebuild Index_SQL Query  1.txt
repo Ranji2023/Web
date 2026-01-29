@@ -1,0 +1,8 @@
+
+SELECT OBJECT_NAME(object_id), index_id, page_count, index_type_desc, avg_fragmentation_in_percent, fragment_count  FROM sys.dm_db_index_physical_stats(db_id(),NULL,NULL,NULL,'LIMITED')
+
+
+
+Rebuilt Query
+----------------
+ALTER INDEX __NAME_OF_INDEX__ ON __NAME_OF_TABLE__ REBUILD
